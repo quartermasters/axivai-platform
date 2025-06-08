@@ -263,6 +263,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <strong>Built with ❤️ by the AXIVAI Team</strong><br>
+  <strong>Built with ❤️ by the Quartermasters FZC Team</strong><br>
   <em>Empowering the next generation of startup success</em>
 </div>
