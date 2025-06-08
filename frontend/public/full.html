@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIVAI - Advanced Startup Evaluation Platform</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .navbar h2 {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar button {
+            background: none;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .navbar button:hover {
+            background: #667eea;
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .step.active .step-circle {
+            background: #667eea;
+            color: white;
+        }
+        .step.completed .step-circle {
+            background: #4caf50;
+            color: white;
+        }
+        .form-group { 
+            margin-bottom: 25px; 
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600;
+            color: #333;
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 12px; 
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: #fafafa;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        textarea { 
+            resize: vertical; 
+            min-height: 120px; 
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.secondary {
+            background: #6c757d;
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+        }
+        .hidden { 
+            display: none; 
+        }
+        .alert { 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 12px;
+            border-left: 5px solid;
+        }
+        .alert-success { 
+            background: #d4edda; 
+            color: #155724; 
+            border-color: #4caf50;
+        }
+        .alert-error { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border-color: #f44336;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #2196f3;
+        }
+        .verdict {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            border: 3px solid;
+        }
+        .verdict.validate { 
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            border-color: #4caf50;
+        }
+        .verdict.conditional { 
+            background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+            color: #f57c00;
+            border-color: #ff9800;
+        }
+        .verdict.pivot { 
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1976d2;
+            border-color: #2196f3;
+        }
+        .verdict.invalid { 
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #d32f2f;
+            border-color: #f44336;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .agent-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .agent-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .agent-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .agent-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.6s ease;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: #f0f2ff;
+            border-color: #5a67d8;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .demo-note {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .demo-note strong {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="card">
+            <div class="header">
+                <h1>🚀 AXIVAI</h1>
+                <p>Advanced AI-Powered Startup Evaluation Platform</p>
+            </div>
+            
+            <div class="demo-note">
+                <strong>🎯 Demo Access</strong>
+                Email: test@example.com | Password: testpassword
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">📧 Email Address</label>
+                        <input type="email" id="email" value="test@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">🔒 Password</label>
+                        <input type="password" id="password" value="testpassword" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">🚀 Access Platform</button>
+            </form>
+            
+            <div id="loginError" class="alert alert-error hidden"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div id="navbar" class="navbar hidden">
+            <div>
+                <h2>🚀 AXIVAI</h2>
+            </div>
+            <div class="nav-links">
+                <button onclick="showScreen('dashboard')">📊 Dashboard</button>
+                <button onclick="showScreen('evaluation')">🔍 Evaluate</button>
+                <button onclick="showScreen('matching')">🤝 Matching</button>
+                <button onclick="logout()" class="secondary">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="card">
+                <div class="header">
+                    <h1>📊 Executive Dashboard</h1>
+                    <p>AI-Powered Startup Intelligence & Analytics</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>📈 Total Evaluations</h3>
+                        <div class="value">127</div>
+                        <p>+23% this month</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🎯 Success Rate</h3>
+                        <div class="value">78%</div>
+                        <p>Validate + Conditional</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>⚡ Avg. Score</h3>
+                        <div class="value">7.2</div>
+                        <p>Out of 10.0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🚀 Active Projects</h3>
+                        <div class="value">15</div>
+                        <p>In pipeline</p>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>AI Evaluation Engine</h3>
+                        <p>5 specialized agents analyze your startup across all dimensions</p>
+                        <button onclick="showScreen('evaluation')" class="btn">Start Evaluation</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3>Investor Matching</h3>
+                        <p>Connect with compatible investors based on stage, domain & location</p>
+                        <button onclick="showScreen('matching')" class="btn">Find Matches</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Analytics Suite</h3>
+                        <p>Deep insights into market trends and performance metrics</p>
+                        <button onclick="showAnalytics()" class="btn">View Analytics</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Form -->
+        <div id="evaluation" class="hidden">
+            <div class="card">
+                <div class="header">
+                    <h1>🔍 Advanced Startup Evaluation</h1>
+                    <p>Comprehensive AI-Powered Assessment</p>
+                </div>
+                
+                <!-- Progress Stepper -->
+                <div class="stepper">
+                    <div class="step active" id="step1">
+                        <div class="step-circle">1</div>
+                        <div>Company Info</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-circle">2</div>
+                        <div>Business Model</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-circle">3</div>
+                        <div>Market & Traction</div>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-circle">4</div>
+                        <div>Financials</div>
+                    </div>
+                    <div class="step" id="step5">
+                        <div class="step-circle">5</div>
+                        <div>Review & Submit</div>
+                    </div>
+                </div>
+                
+                <form id="evalForm">
+                    <!-- Step 1: Company Info -->
+                    <div id="evalStep1" class="eval-step">
+                        <h3>🏢 Company Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="companyName">Company Name *</label>
+                                <input type="text" id="companyName" required placeholder="e.g., TechFlow AI">
+                            </div>
+                            <div class="form-group">
+                                <label for="stage">Lifecycle Stage *</label>
+                                <select id="stage" required>
+                                    <option value="">Select Stage</option>
+                                    <option value="1">1 - Ideation</option>
+                                    <option value="2">2 - Validation</option>
+                                    <option value="3">3 - Early Traction</option>
+                                    <option value="4">4 - Growth</option>
+                                    <option value="5">5 - Expansion</option>
+                                    <option value="6">6 - Maturity</option>
+                                    <option value="7">7 - Decline/Pivot</option>
+                                    <option value="8">8 - Exit Preparation</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Company Description *</label>
+                            <textarea id="description" required placeholder="Describe your startup: What problem does it solve? What's your solution? Who's your target market? What makes you unique?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="teamInfo">Team Information</label>
+                            <textarea id="teamInfo" placeholder="Key team members, their backgrounds, relevant experience, and why they're the right team for this venture..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Business Model -->
+                    <div id="evalStep2" class="eval-step hidden">
+                        <h3>💼 Business Model & Strategy</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="businessModel">Business Model *</label>
+                                <select id="businessModel" required>
+                                    <option value="">Select Model</option>
+                                    <option value="saas">SaaS (Software as a Service)</option>
+                                    <option value="marketplace">Marketplace Platform</option>
+                                    <option value="subscription">Subscription Service</option>
+                                    <option value="freemium">Freemium Model</option>
+                                    <option value="ecommerce">E-commerce</option>
+                                    <option value="hardware">Hardware Product</option>
+                                    <option value="consulting">Consulting/Services</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="revenueModel">Revenue Streams</label>
+                                <input type="text" id="revenueModel" placeholder="e.g., Monthly subscriptions, Transaction fees, Licensing">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="valueProposition">Value Proposition</label>
+                            <textarea id="valueProposition" placeholder="What unique value do you provide? How do you solve customer pain points better than alternatives?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="competitiveAdvantage">Competitive Advantage</label>
+                            <textarea id="competitiveAdvantage" placeholder="What gives you a sustainable competitive edge? Technology, partnerships, network effects, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Market & Traction -->
+                    <div id="evalStep3" class="eval-step hidden">
+                        <h3>🎯 Market Analysis & Traction</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="targetMarket">Target Market</label>
+                                <input type="text" id="targetMarket" placeholder="e.g., SMB SaaS, Enterprise Healthcare, Consumer FinTech">
+                            </div>
+                            <div class="form-group">
+                                <label for="marketSize">Market Size (TAM/SAM/SOM)</label>
+                                <input type="text" id="marketSize" placeholder="e.g., $50B TAM, $5B SAM, $500M SOM">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerCount">Current Customers</label>
+                                <input type="number" id="customerCount" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="monthlyGrowth">Monthly Growth Rate (%)</label>
+                                <input type="number" id="monthlyGrowth" placeholder="0" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tractionMetrics">Key Traction Metrics</label>
+                            <textarea id="tractionMetrics" placeholder="Revenue, user growth, partnerships, pilot programs, press coverage, awards, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Financials -->
+                    <div id="evalStep4" class="eval-step hidden">
+                        <h3>💰 Financial Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="revenue">Annual Revenue ($)</label>
+                                <input type="number" id="revenue" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="burnRate">Monthly Burn Rate ($)</label>
+                                <input type="number" id="burnRate" placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="funding">Total Funding Raised ($)</label>
+                                <input type="number" id="funding" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="valuation">Current Valuation ($)</label>
+                                <input type="number" id="valuation" placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="upload-area" onclick="document.getElementById('pitchDeck').click()">
+                            <div class="upload-icon">📄</div>
+                            <h3>Upload Pitch Deck (Optional)</h3>
+                            <p>PDF or PowerPoint files only</p>
+                            <input type="file" id="pitchDeck" accept=".pdf,.ppt,.pptx" style="display: none;">
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Review -->
+                    <div id="evalStep5" class="eval-step hidden">
+                        <h3>📋 Review & Submit</h3>
+                        
+                        <div class="alert alert-info">
+                            <h4>🔒 Privacy & Data Protection</h4>
+                            <p>Your evaluation data is processed with enterprise-grade security. Choose your retention preference:</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="privacyMode" checked>
+                                Enable Privacy Mode (Delete data after 24 hours)
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="investorMatching">
+                                Enable investor matching (Optional)
+                            </label>
+                        </div>
+
+                        <div id="reviewSummary" style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                            <!-- Summary will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <button type="button" id="prevBtn" onclick="changeStep(-1)" class="btn secondary hidden">← Previous</button>
+                        <button type="button" id="nextBtn" onclick="changeStep(1)" class="btn">Next →</button>
+                        <button type="submit" id="submitBtn" class="btn success hidden">🚀 Start AI Evaluation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="hidden">
+            <div class="card">
+                <div class="header">
+                    <h1>📊 AI Evaluation Results</h1>
+                    <p>Comprehensive Analysis by AXIVAI Intelligence Engine</p>
+                </div>
+                
+                <div id="resultContent"></div>
+                
+                <div style="margin-top: 30px;">
+                    <button onclick="showScreen('dashboard')" class="btn">← Dashboard</button>
+                    <button onclick="showScreen('evaluation')" class="btn">🔄 New Evaluation</button>
+                    <button onclick="downloadReport()" class="btn success">📄 Download Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investor Matching -->
+        <div id="matching" class="hidden">
+            <div class="card">
+                <div class="header">
+                    <h1>🤝 Investor Matching Hub</h1>
+                    <p>AI-Powered Investor-Startup Compatibility</p>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="showMatchingTab('discover')">🔍 Discover</div>
+                    <div class="tab" onclick="showMatchingTab('matches')">⭐ My Matches</div>
+                    <div class="tab" onclick="showMatchingTab('activity')">📈 Activity</div>
+                </div>
+
+                <div id="matchingContent">
+                    <div class="alert alert-info">
+                        🚀 <strong>Coming Soon:</strong> Advanced investor matching with 500+ verified investors across stages 1-8.
+                        <br>Features: Stage alignment, domain expertise, geographic preferences, and portfolio analysis.
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3>Smart Matching</h3>
+                            <p>AI analyzes 50+ compatibility factors</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Success Prediction</h3>
+                            <p>ML models predict funding probability</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔒</div>
+                            <h3>Verified Network</h3>
+                            <p>KYC-verified investor database</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        var currentScreen = 'login';
+        var currentStep = 1;
+        var isLoggedIn = false;
+        var evaluationData = {};
+
+        // Screen management
+        function showScreen(screenName) {
+            var screens = ['loginScreen', 'dashboard', 'evaluation', 'results', 'matching'];
+            var navbar = document.getElementById('navbar');
+            
+            for (var i = 0; i < screens.length; i++) {
+                var element = document.getElementById(screens[i]);
+                if (element) {
+                    element.className = screenName === screens[i] ? 'card' : 'hidden';
+                }
+            }
+            
+            navbar.className = isLoggedIn && screenName !== 'loginScreen' ? 'navbar' : 'navbar hidden';
+            currentScreen = screenName;
+        }
+
+        // Step management for evaluation form
+        function changeStep(direction) {
+            var newStep = currentStep + direction;
+            if (newStep < 1 || newStep > 5) return;
+            
+            // Hide current step
+            document.getElementById('evalStep' + currentStep).className = 'eval-step hidden';
+            document.getElementById('step' + currentStep).className = 'step completed';
+            
+            // Show new step
+            currentStep = newStep;
+            document.getElementById('evalStep' + currentStep).className = 'eval-step';
+            document.getElementById('step' + currentStep).className = 'step active';
+            
+            // Update buttons
+            document.getElementById('prevBtn').className = currentStep > 1 ? 'btn secondary' : 'btn secondary hidden';
+            document.getElementById('nextBtn').className = currentStep < 5 ? 'btn' : 'btn hidden';
+            document.getElementById('submitBtn').className = currentStep === 5 ? 'btn success' : 'btn success hidden';
+            
+            // Update review summary on last step
+            if (currentStep === 5) {
+                updateReviewSummary();
+            }
+        }
+
+        function updateReviewSummary() {
+            var summary = '<h4>📋 Evaluation Summary</h4>';
+            summary += '<p><strong>Company:</strong> ' + (document.getElementById('companyName').value || 'Not specified') + '</p>';
+            summary += '<p><strong>Stage:</strong> ' + getStageLabel(document.getElementById('stage').value) + '</p>';
+            summary += '<p><strong>Business Model:</strong> ' + (document.getElementById('businessModel').value || 'Not specified') + '</p>';
+            summary += '<p><strong>Revenue:</strong> $' + (document.getElementById('revenue').value || '0') + '</p>';
+            document.getElementById('reviewSummary').innerHTML = summary;
+        }
+
+        function getStageLabel(value) {
+            var stages = {
+                '1': 'Ideation', '2': 'Validation', '3': 'Early Traction',
+                '4': 'Growth', '5': 'Expansion', '6': 'Maturity',
+                '7': 'Decline/Pivot', '8': 'Exit Preparation'
+            };
+            return stages[value] || 'Not selected';
+        }
+
+        // Login handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            var errorDiv = document.getElementById('loginError');
+
+            if (email === 'test@example.com' && password === 'testpassword') {
+                isLoggedIn = true;
+                errorDiv.className = 'alert alert-error hidden';
+                showScreen('dashboard');
+            } else {
+                errorDiv.textContent = 'Invalid credentials. Use test@example.com / testpassword';
+                errorDiv.className = 'alert alert-error';
+            }
+        });
+
+        // Evaluation form handling
+        document.getElementById('evalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect all form data
+            evaluationData = {
+                companyName: document.getElementById('companyName').value,
+                stage: parseInt(document.getElementById('stage').value),
+                description: document.getElementById('description').value,
+                teamInfo: document.getElementById('teamInfo').value,
+                businessModel: document.getElementById('businessModel').value,
+                revenueModel: document.getElementById('revenueModel').value,
+                valueProposition: document.getElementById('valueProposition').value,
+                competitiveAdvantage: document.getElementById('competitiveAdvantage').value,
+                targetMarket: document.getElementById('targetMarket').value,
+                marketSize: document.getElementById('marketSize').value,
+                customerCount: document.getElementById('customerCount').value,
+                monthlyGrowth: document.getElementById('monthlyGrowth').value,
+                tractionMetrics: document.getElementById('tractionMetrics').value,
+                revenue: document.getElementById('revenue').value,
+                burnRate: document.getElementById('burnRate').value,
+                funding: document.getElementById('funding').value,
+                valuation: document.getElementById('valuation').value,
+                privacyMode: document.getElementById('privacyMode').checked,
+                investorMatching: document.getElementById('investorMatching').checked
+            };
+
+            // Advanced AI scoring
+            var results = performAdvancedEvaluation(evaluationData);
+            showAdvancedResults(results);
+        });
+
+        function performAdvancedEvaluation(data) {
+            // Advanced scoring algorithm
+            var scores = {
+                ideaHunter: calculateIdeaScore(data),
+                marketMiner: calculateMarketScore(data),
+                modelJudge: calculateModelScore(data),
+                riskOracle: calculateRiskScore(data),
+                valuatorX: calculateValuationScore(data)
+            };
+
+            // Stage-specific weights
+            var weights = getStageWeights(data.stage);
+            var overallScore = 0;
+            for (var agent in scores) {
+                overallScore += scores[agent] * weights[agent];
+            }
+
+            var verdict = getAdvancedVerdict(overallScore, scores);
+            
+            return {
+                company_name: data.companyName,
+                stage: data.stage,
+                overall_score: overallScore,
+                verdict: verdict,
+                agent_scores: scores,
+                explanation: generateAdvancedExplanation(data, overallScore, verdict),
+                recommendations: generateAdvancedRecommendations(data, scores),
+                weights: weights,
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        function calculateIdeaScore(data) {
+            var score = 0.5;
+            
+            // Description quality
+            if (data.description.length > 200) score += 0.2;
+            else if (data.description.length > 100) score += 0.1;
+            
+            // Innovation keywords
+            var innovationWords = ['ai', 'ml', 'blockchain', 'iot', 'automation', 'patent', 'proprietary'];
+            innovationWords.forEach(function(word) {
+                if (data.description.toLowerCase().includes(word)) score += 0.05;
+            });
+            
+            // Team information
+            if (data.teamInfo && data.teamInfo.length > 100) score += 0.1;
+            
+            return Math.min(score, 1.0);
+        }
+
+        function calculateMarketScore(data) {
+            var score = 0.4;
+            
+            // Market size indication
+            if (data.marketSize) {
+                if (data.marketSize.toLowerCase().includes('b')) score += 0.2; // Billion
+                else if (data.marketSize.toLowerCase().includes('m')) score += 0.1; // Million
+            }
+            
+            // Customer traction
+            var customers = parseInt(data.customerCount) || 0;
+            if (customers > 1000) score += 0.2;
+            else if (customers > 100) score += 0.15;
+            else if (customers > 10) score += 0.1;
+            
+            // Growth rate
+            var growth = parseFloat(data.monthlyGrowth) || 0;
+            if (growth > 20) score += 0.15;
+            else if (growth > 10) score += 0.1;
+            else if (growth > 5) score += 0.05;
+            
+            return Math.min(score, 1.0);
+        }
+
+        function calculateModelScore(data) {
+            var score = 0.4;
+            
+            // Business model viability
+            var goodModels = ['saas', 'marketplace', 'subscription'];
+            if (goodModels.includes(data.businessModel)) score += 0.2;
+            
+            // Revenue indication
+            var revenue = parseInt(data.revenue) || 0;
+            if (revenue > 1000000) score += 0.2; // >$1M
+            else if (revenue > 100000) score += 0.15; // >$100K
+            else if (revenue > 10000) score += 0.1; // >$10K
+            
+            // Value proposition clarity
+            if (data.valueProposition && data.valueProposition.length > 50) score += 0.1;
+            
+            return Math.min(score, 1.0);
+        }
+
+        function calculateRiskScore(data) {
+            var score = 0.8; // Start high, deduct for risks
+            
+            // Burn rate vs revenue
+            var revenue = parseInt(data.revenue) || 0;
+            var burnRate = parseInt(data.burnRate) || 0;
+            if (burnRate > revenue / 12 && burnRate > 0) score -= 0.2;
+            
+            // Early stage without traction
+            if (data.stage <= 2 && (!data.customerCount || data.customerCount == 0)) score -= 0.1;
+            
+            // High competition indicators
+            var competitiveWords = ['crowded', 'competitive', 'saturated'];
+            competitiveWords.forEach(function(word) {
+                if ((data.description + ' ' + (data.competitiveAdvantage || '')).toLowerCase().includes(word)) {
+                    score -= 0.05;
+                }
+            });
+            
+            return Math.max(score, 0.1);
+        }
+
+        function calculateValuationScore(data) {
+            var score = 0.5;
+            
+            var revenue = parseInt(data.revenue) || 0;
+            var valuation = parseInt(data.valuation) || 0;
+            
+            if (revenue > 0 && valuation > 0) {
+                var multiple = valuation / revenue;
+                // Reasonable multiples by stage
+                var expectedMultiples = {1: 20, 2: 15, 3: 12, 4: 8, 5: 6, 6: 4, 7: 3, 8: 5};
+                var expected = expectedMultiples[data.stage] || 10;
+                
+                if (multiple >= expected * 0.5 && multiple <= expected * 2) score += 0.3;
+                else if (multiple >= expected * 0.3 && multiple <= expected * 3) score += 0.2;
+            }
+            
+            // Funding efficiency
+            var funding = parseInt(data.funding) || 0;
+            if (funding > 0 && revenue > 0) {
+                var efficiency = revenue / funding;
+                if (efficiency > 0.5) score += 0.2;
+                else if (efficiency > 0.2) score += 0.1;
+            }
+            
+            return Math.min(score, 1.0);
+        }
+
+        function getStageWeights(stage) {
+            var weights = {
+                1: {ideaHunter: 0.4, marketMiner: 0.3, modelJudge: 0.2, riskOracle: 0.05, valuatorX: 0.05},
+                2: {ideaHunter: 0.3, marketMiner: 0.4, modelJudge: 0.2, riskOracle: 0.05, valuatorX: 0.05},
+                3: {ideaHunter: 0.2, marketMiner: 0.3, modelJudge: 0.3, riskOracle: 0.1, valuatorX: 0.1},
+                4: {ideaHunter: 0.1, marketMiner: 0.2, modelJudge: 0.3, riskOracle: 0.2, valuatorX: 0.2},
+                5: {ideaHunter: 0.05, marketMiner: 0.15, modelJudge: 0.3, riskOracle: 0.25, valuatorX: 0.25},
+                6: {ideaHunter: 0.05, marketMiner: 0.1, modelJudge: 0.2, riskOracle: 0.3, valuatorX: 0.35},
+                7: {ideaHunter: 0.1, marketMiner: 0.2, modelJudge: 0.3, riskOracle: 0.2, valuatorX: 0.2},
+                8: {ideaHunter: 0.05, marketMiner: 0.1, modelJudge: 0.15, riskOracle: 0.2, valuatorX: 0.5}
+            };
+            return weights[stage] || weights[3];
+        }
+
+        function getAdvancedVerdict(overallScore, scores) {
+            // Consider red flags
+            if (scores.riskOracle < 0.3) return 'invalid';
+            if (overallScore >= 0.75) return 'validate';
+            if (overallScore >= 0.55) return 'conditional';
+            if (overallScore >= 0.35) return 'pivot';
+            return 'invalid';
+        }
+
+        function generateAdvancedExplanation(data, score, verdict) {
+            var performance = score >= 0.75 ? 'exceptional' : score >= 0.6 ? 'strong' : score >= 0.4 ? 'moderate' : 'limited';
+            var stage = getStageLabel(data.stage.toString());
+            
+            return `${data.companyName} demonstrates ${performance} potential at the ${stage} stage with an overall score of ${Math.round(score * 100)}%. ` +
+                   `Our AI analysis evaluated ${Object.keys(evaluationData).length} data points across 5 specialized agents to reach this ${verdict} verdict.`;
+        }
+
+        function generateAdvancedRecommendations(data, scores) {
+            var recs = [];
+            
+            if (scores.ideaHunter < 0.6) recs.push('Strengthen core value proposition and differentiation strategy');
+            if (scores.marketMiner < 0.6) recs.push('Conduct deeper market research and validate demand assumptions');
+            if (scores.modelJudge < 0.6) recs.push('Refine business model and revenue optimization strategy');
+            if (scores.riskOracle < 0.6) recs.push('Address key risk factors and develop mitigation strategies');
+            if (scores.valuatorX < 0.6) recs.push('Improve financial metrics and valuation justification');
+            
+            // Stage-specific recommendations
+            if (data.stage <= 2) recs.push('Focus on customer validation and product-market fit');
+            else if (data.stage <= 4) recs.push('Optimize growth metrics and scaling operations');
+            else recs.push('Prepare for next funding round or exit opportunities');
+            
+            return recs.slice(0, 4); // Top 4 recommendations
+        }
+
+        function showAdvancedResults(results) {
+            var verdictEmojis = {
+                'validate': '✅ VALIDATE',
+                'conditional': '⚠️ CONDITIONAL',
+                'pivot': '🔁 PIVOT',
+                'invalid': '❌ INVALID'
+            };
+            
+            var verdictDescriptions = {
+                'validate': 'Strong potential - Recommended for investment and development',
+                'conditional': 'Promising opportunity with conditions - Address key areas before proceeding',
+                'pivot': 'Significant changes needed - Consider strategic pivot or major improvements',
+                'invalid': 'High risk factors identified - Fundamental issues require resolution'
+            };
+
+            var agentNames = {
+                'ideaHunter': '🎯 IdeaHunter',
+                'marketMiner': '📊 MarketMiner',
+                'modelJudge': '💼 ModelJudge',
+                'riskOracle': '⚠️ RiskOracle',
+                'valuatorX': '💰 ValuatorX'
+            };
+            
+            var html = `
+                <div class="verdict ${results.verdict}">
+                    ${verdictEmojis[results.verdict]}<br>
+                    <div style="font-size: 0.6em; margin-top: 10px;">${verdictDescriptions[results.verdict]}</div>
+                    <div style="font-size: 0.8em; margin-top: 15px;">Overall Score: ${Math.round(results.overall_score * 100)}%</div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>🧠 AI Analysis Summary:</strong><br>
+                    ${results.explanation}
+                </div>
+
+                <h3>🎯 Detailed Agent Analysis</h3>
+                <div class="agent-grid">
+            `;
+            
+            for (var agent in results.agent_scores) {
+                var score = Math.round(results.agent_scores[agent] * 100);
+                var weight = Math.round(results.weights[agent] * 100);
+                html += `
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <h4>${agentNames[agent]}</h4>
+                            <div class="agent-score">${score}%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${score}%"></div>
+                        </div>
+                        <p style="font-size: 0.9em; color: #666;">Weight in Stage ${results.stage}: ${weight}%</p>
+                    </div>
+                `;
+            }
+            
+            html += `
+                </div>
+                
+                <h3>💡 Strategic Recommendations</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
+                    <ul style="list-style: none; padding: 0;">
+            `;
+            
+            results.recommendations.forEach(function(rec, index) {
+                html += `<li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <strong>${index + 1}.</strong> ${rec}
+                </li>`;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+
+                <div class="alert alert-success" style="margin-top: 20px;">
+                    <strong>🔒 Privacy Confirmed:</strong> 
+                    ${results.timestamp ? 'Evaluation completed on ' + new Date(results.timestamp).toLocaleDateString() : ''}
+                    ${evaluationData.privacyMode ? ' • Data will be automatically deleted in 24 hours' : ' • Data retained for dashboard access'}
+                </div>
+            `;
+            
+            document.getElementById('resultContent').innerHTML = html;
+            showScreen('results');
+        }
+
+        // Utility functions
+        function logout() {
+            isLoggedIn = false;
+            currentStep = 1;
+            showScreen('loginScreen');
+            
+            // Reset form
+            document.getElementById('evalForm').reset();
+            for (var i = 1; i <= 5; i++) {
+                document.getElementById('evalStep' + i).className = i === 1 ? 'eval-step' : 'eval-step hidden';
+                document.getElementById('step' + i).className = i === 1 ? 'step active' : 'step';
+            }
+        }
+
+        function showMatchingTab(tab) {
+            // Tab functionality placeholder
+            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+            event.target.classList.add('active');
+        }
+
+        function showAnalytics() {
+            alert('🚀 Advanced Analytics Suite coming soon!\n\nFeatures:\n• Market trend analysis\n• Competitive benchmarking\n• Performance forecasting\n• Industry insights');
+        }
+
+        function downloadReport() {
+            alert('📄 PDF Report Generation\n\nYour comprehensive evaluation report is being prepared...\n\nIncludes:\n• Executive summary\n• Detailed agent analysis\n• Benchmark comparisons\n• Strategic recommendations');
+        }
+
+        // Initialize
+        showScreen('loginScreen');
+    </script>
+</body>
+</html>
